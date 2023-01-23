@@ -4,6 +4,7 @@ import BotCard from "./BotCard";
 function BotCollection(props) {
   // Your code here
   const bots = props.bots.map((bot) => {
+    console.log(`boom:${bot}`);
     return <BotCard key={bot.id} bot={bot} botFunction={props.botFunction}/>
   })
 
@@ -12,7 +13,7 @@ function BotCollection(props) {
       <div className="row">
         
         {bots}
-      </div>
+      </div>  
     </div>
   );
 }
