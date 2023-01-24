@@ -1,32 +1,49 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import YourBotArmy from "./YourBotArmy";
 import BotCollection from "./BotCollection";
 
+
+
+
 function BotsPage() {
-  
-  const [bots, setBots] = React.useState([])
-  const [yourBots, setYourBots] = React.useState([])
+  //start here with your code for step one
+  const [bots,setBots]=useState([])
 
-  React.useEffect(() => {
-    fetch("http://localhost:8001/bots")
-      .then((r) => r.json())
-      .then((bots) => setBots(bots));
-  }, []);
+//API data fetch
 
-  const addBot = (bot) => {
-    if (!yourBots.includes(bot)) {
-      setYourBots([...yourBots, bot])
-    }
+useEffect(()=>{
+  fetch("http://localhost:8002/bots")
+  .then(res=>res.json())
+  .then(data=>setBots(data))
+},[])
+
+const updateBot=(id)=>{
+  {
+    setBots(bots.map(bot => id === bot.id ? {...bot, isAdded:true} : bot))
   }
+}
 
-  const removeBot = (bot) => {
-    setYourBots(yourBots.filter((yourBot) => yourBot.id !== bot.id))
+const removeBot= (id)=>{
+  {
+    setBots(bots.map(bot => id === bot.id ? {...bot, isAdded:false} : bot))
   }
-
-  return (
+}
+const deleteBot=(id) => {
+  fetch(`http://localhost:8002/bots/${id}`,{
+  method:"DELETE"
+}).then (() =>setBots ((previousData)=>previousData.filter(bot =>bot.id !== id)))
+}
+return (
     <div>
-      <YourBotArmy bots={yourBots} removeBot={removeBot} />
-      <BotCollection bots={bots} botFunction={addBot} />
+      <YourBotArmy bots={bots.filter(bot=>bot.isAdded)}
+      handleClick={removeBot}
+    handleDelete={deleteBot}
+      
+      />
+      <BotCollection bots={bots}
+     handleClick={updateBot}
+    handleDelete={deleteBot}
+     />
     </div>
   )
 }
